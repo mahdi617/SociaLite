@@ -9,54 +9,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 2) ساخت نهاییِ داده برای نمایش (ترجیح localStorage به JSON)
       const finalData = {
-        first_name:      saved.firstName    || userData.first_name,
-        last_name:       saved.lastName     || userData.last_name,
-        bio:             saved.bio          || userData.bio,
-        username:        userData.username,
+        first_name: saved.firstName || userData.first_name,
+        last_name: saved.lastName || userData.last_name,
+        bio: saved.bio || userData.bio,
+        username: userData.username,
         profile_photo_url: saved.profilePicture || userData.profile_photo_url,
-        is_private:      saved.isPrivate != null ? saved.isPrivate : userData.is_private
+        is_private:
+          saved.isPrivate != null ? saved.isPrivate : userData.is_private,
       };
 
       // 3) تأخیر صفر برای تضمین آماده بودن DOM
       setTimeout(() => {
         // المان‌های پروفایل
-        const firstNameEl   = document.getElementById("firstName");
-        const lastNameEl    = document.getElementById("lastName");
-        const profileBioEl  = document.getElementById("profileBio");
-        const profilePicEl  = document.getElementById("profilePicture");
-        const usernameEl    = document.getElementById("username");
+        const firstNameEl = document.getElementById("firstName");
+        const lastNameEl = document.getElementById("lastName");
+        const profileBioEl = document.getElementById("profileBio");
+        const profilePicEl = document.getElementById("profilePicture");
+        const usernameEl = document.getElementById("username");
 
         // المان‌های فرم ویرایش
         const editFirstName = document.getElementById("editFirstName");
-        const editLastName  = document.getElementById("editLastName");
-        const editBio       = document.getElementById("editBio");
-        const previewPic    = document.getElementById("previewPicture");
+        const editLastName = document.getElementById("editLastName");
+        const editBio = document.getElementById("editBio");
+        const previewPic = document.getElementById("previewPicture");
 
         // المان‌های حریم خصوصی
-        const toggleBtn     = document.getElementById("togglePrivacy");
+        const toggleBtn = document.getElementById("togglePrivacy");
         const privacyStatus = document.getElementById("privacyStatus");
 
         if (
-          !firstNameEl || !lastNameEl || !profileBioEl ||
-          !profilePicEl || !usernameEl ||
-          !editFirstName || !editLastName ||
-          !editBio || !previewPic
+          !firstNameEl ||
+          !lastNameEl ||
+          !profileBioEl ||
+          !profilePicEl ||
+          !usernameEl ||
+          !editFirstName ||
+          !editLastName ||
+          !editBio ||
+          !previewPic
         ) {
           console.warn("برخی المان‌ها در DOM پیدا نشدند. لطفاً بررسی کنید.");
           return;
         }
 
         // 4) مقداردهی اولیه از finalData
-        firstNameEl.textContent  = finalData.first_name;
-        lastNameEl.textContent   = finalData.last_name;
+        firstNameEl.textContent = finalData.first_name;
+        lastNameEl.textContent = finalData.last_name;
         profileBioEl.textContent = finalData.bio;
-        profilePicEl.src         = finalData.profile_photo_url;
-        usernameEl.textContent   = finalData.username;
+        profilePicEl.src = finalData.profile_photo_url;
+        usernameEl.textContent = finalData.username;
 
         editFirstName.value = finalData.first_name;
-        editLastName.value  = finalData.last_name;
-        editBio.value       = finalData.bio;
-        previewPic.src      = finalData.profile_photo_url;
+        editLastName.value = finalData.last_name;
+        editBio.value = finalData.bio;
+        previewPic.src = finalData.profile_photo_url;
 
         // وضعیت اولیه حریم خصوصی
         let isPrivate = finalData.is_private;
@@ -73,21 +79,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (saveBtn) {
           saveBtn.addEventListener("click", () => {
             // به‌روزرسانی نمایش اصلی
-            firstNameEl.textContent   = editFirstName.value;
-            lastNameEl.textContent    = editLastName.value;
-            profileBioEl.textContent  = editBio.value;
-            profilePicEl.src          = previewPic.src;
+            firstNameEl.textContent = editFirstName.value;
+            lastNameEl.textContent = editLastName.value;
+            profileBioEl.textContent = editBio.value;
+            profilePicEl.src = previewPic.src;
             if (privacyStatus) {
               privacyStatus.textContent = isPrivate ? "خصوصی" : "عمومی";
             }
 
             // ذخیره در localStorage
             const newProfile = {
-              firstName:      editFirstName.value,
-              lastName:       editLastName.value,
-              bio:            editBio.value,
+              firstName: editFirstName.value,
+              lastName: editLastName.value,
+              bio: editBio.value,
               profilePicture: previewPic.src,
-              isPrivate:      isPrivate
+              isPrivate: isPrivate,
             };
             localStorage.setItem("profileData", JSON.stringify(newProfile));
 
@@ -127,7 +133,7 @@ class InstagramProfile {
     this.initializeElements();
     this.bindEvents();
     this.updateUI();
-    
+
     this.loadProfileFromStorage();
   }
 
@@ -206,11 +212,12 @@ class InstagramProfile {
       galleryUsername.textContent = this.profileData.username;
     }
 
-    document.querySelectorAll(".gallery-user-avatar").forEach(el => {
-    el.style.backgroundImage = `url(${this.profileData.profilePicture})`;
-    el.style.backgroundSize = "cover";
-    el.style.backgroundPosition = "center";})}
-
+    document.querySelectorAll(".gallery-user-avatar").forEach((el) => {
+      el.style.backgroundImage = `url(${this.profileData.profilePicture})`;
+      el.style.backgroundSize = "cover";
+      el.style.backgroundPosition = "center";
+    });
+  }
 
   bindEvents() {
     this.profileToggle.addEventListener("click", () =>
@@ -232,6 +239,27 @@ class InstagramProfile {
         this.closeEditModal();
       }
     });
+    // محدودیت 100 کاراکتر برای بیو
+    this.editBio.addEventListener("input", () => {
+      if (this.editBio.value.length > 100) {
+        this.editBio.value = this.editBio.value.slice(0, 100);
+        this.showErrorMessage("حداکثر 100 کاراکتر مجاز است.");
+      }
+    });
+    // شمارنده کاراکترهای بیو داخل textarea
+    const bioCounter = document.getElementById("bioCounter");
+    if (bioCounter) {
+      const updateBioCounter = () => {
+        let length = this.editBio.value.length;
+        if (length > 100) {
+          this.editBio.value = this.editBio.value.slice(0, 100);
+          length = 100;
+        }
+        bioCounter.textContent = `${length}/100`;
+      };
+      this.editBio.addEventListener("input", updateBioCounter);
+      updateBioCounter();
+    }
   }
 
   toggleProfileView() {
@@ -283,15 +311,13 @@ class InstagramProfile {
     }
   }
 
-updateGalleryVisibility() {
-  const gallery = document.querySelector(".gallery-container");
-  // اگر صاحب پروفایل است یا پروفایل عمومیست یا دنبال کرده باشد
-  const shouldShow =
-    this.isOwnProfile ||
-    !this.profileData.isPrivate ||
-    this.isFollowing;
-  gallery.style.display = shouldShow ? "block" : "none";
-}
+  updateGalleryVisibility() {
+    const gallery = document.querySelector(".gallery-container");
+    // اگر صاحب پروفایل است یا پروفایل عمومیست یا دنبال کرده باشد
+    const shouldShow =
+      this.isOwnProfile || !this.profileData.isPrivate || this.isFollowing;
+    gallery.style.display = shouldShow ? "block" : "none";
+  }
 
   updateEditButton() {
     const editButton = document.querySelector(".gallery-action-off");
@@ -400,6 +426,16 @@ updateGalleryVisibility() {
         this.resetSaveButton();
         return;
       }
+      if (bio.length > 100) {
+        this.showErrorMessage("توضیحات نباید بیشتر از 100 کاراکتر باشد.");
+        this.resetSaveButton();
+        return;
+      }
+      if (bio.length > 100) {
+        this.showErrorMessage("توضیحات نباید بیشتر از 100 کاراکتر باشد.");
+        this.resetSaveButton();
+        return;
+      }
 
       this.profileData.firstName = firstName;
       this.profileData.lastName = lastName;
@@ -410,15 +446,16 @@ updateGalleryVisibility() {
       }
       // مقدار isPrivate همینجا قبلاً ست شده و تغییری نیاز ندارد
 
-    this.saveProfileData();
-    this.loadProfileFromStorage();
-+   // بروزرسانی نمایش گالری براساس حالت جدید خصوصی/عمومی
-+   this.updateGalleryVisibility();
-    this.resetSaveButton();
-    this.closeEditModal();
-    this.showSuccessMessage("پروفایل با موفقیت به‌روزرسانی شد! 🎉");
+      this.saveProfileData();
+      this.loadProfileFromStorage();
+      +(
+        // بروزرسانی نمایش گالری براساس حالت جدید خصوصی/عمومی
+        (+this.updateGalleryVisibility())
+      );
+      this.resetSaveButton();
+      this.closeEditModal();
+      this.showSuccessMessage("پروفایل با موفقیت به‌روزرسانی شد! 🎉");
     }, 800);
-
   }
 
   resetSaveButton() {
@@ -782,46 +819,51 @@ updateGalleryVisibility() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
- handlePostSubmission() {
-  const description = this.createPostElements.description.innerHTML.trim();
+  handlePostSubmission() {
+    const description = this.createPostElements.description.innerHTML.trim();
 
-  if (
-    !description ||
-    description === this.createPostElements.description.dataset.placeholder
-  ) {
-    this.showErrorMessage("لطفا توضیحات را وارد کنید");
-    this.createPostElements.description.focus();
-    return;
-  }
+    if (
+      !description ||
+      description === this.createPostElements.description.dataset.placeholder
+    ) {
+      this.showErrorMessage("لطفا توضیحات را وارد کنید");
+      this.createPostElements.description.focus();
+      return;
+    }
 
-  if (this.selectedMedia.length === 0) {
-    this.showErrorMessage("لطفا حداقل یک تصویر یا ویدیو انتخاب کنید");
-    return;
-  }
+    if (this.selectedMedia.length === 0) {
+      this.showErrorMessage("لطفا حداقل یک تصویر یا ویدیو انتخاب کنید");
+      return;
+    }
 
-  // ✅ ساخت پست جدید
-  const newPost = {
-    id: Date.now(),
-    slides: this.selectedMedia.map((media) => ({
-      type: media.type,
-      src: media.src,
-    })),
-    description: description,
-    likes: 0,
-    comments: [],
-  };
+    // ✅ ساخت پست جدید
+    const newPost = {
+      id: Date.now(),
+      slides: this.selectedMedia.map((media) => ({
+        type: media.type,
+        src: media.src,
+      })),
+      description: description,
+      likes: 0,
+      comments: [],
+    };
 
-  // ✅ اضافه کردن فقط یک پست با چند اسلاید
-  const galleryGrid = document.querySelector(".gallery-posts-grid");
-  if (galleryGrid) {
-    const slideIndicator = newPost.slides.length > 1 ? `<div class="gallery-slide-indicator">1/${newPost.slides.length}</div>` : "";
+    // ✅ اضافه کردن فقط یک پست با چند اسلاید
+    const galleryGrid = document.querySelector(".gallery-posts-grid");
+    if (galleryGrid) {
+      const slideIndicator =
+        newPost.slides.length > 1
+          ? `<div class="gallery-slide-indicator">1/${newPost.slides.length}</div>`
+          : "";
 
-    const mainMedia = newPost.slides[0];
-    const postHTML = `
+      const mainMedia = newPost.slides[0];
+      const postHTML = `
       <div class="gallery-post-item" data-post="${newPost.id}">
-        ${mainMedia.type === "image"
-          ? `<img src="${mainMedia.src}" alt="Post Cover" />`
-          : `<video src="${mainMedia.src}" muted></video>`}
+        ${
+          mainMedia.type === "image"
+            ? `<img src="${mainMedia.src}" alt="Post Cover" />`
+            : `<video src="${mainMedia.src}" muted></video>`
+        }
         <div class="gallery-post-overlay">
           <div class="gallery-overlay-stat">
               <svg viewBox="0 0 24 24">
@@ -844,18 +886,17 @@ updateGalleryVisibility() {
       </div>
     `;
 
-    galleryGrid.insertAdjacentHTML("afterbegin", postHTML);
-    this.showSuccessMessage("پست با موفقیت ایجاد شد! 🎉");
+      galleryGrid.insertAdjacentHTML("afterbegin", postHTML);
+      this.showSuccessMessage("پست با موفقیت ایجاد شد! 🎉");
+    }
+
+    // ❗ اگر از window.posts استفاده می‌کنید، اینجا اضافه‌اش کن
+    if (window.posts) {
+      window.posts.unshift(newPost);
+    }
+
+    this.closeCreatePostModal();
   }
-
-  // ❗ اگر از window.posts استفاده می‌کنید، اینجا اضافه‌اش کن
-  if (window.posts) {
-    window.posts.unshift(newPost);
-  }
-
-  this.closeCreatePostModal();
-}
-
 
   resetCreatePostForm() {
     if (this.createPostElements) {
