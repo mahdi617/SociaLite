@@ -8,7 +8,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/css/profile.css" />
   </head>
   <body>
@@ -93,13 +96,19 @@
               placeholder="نام خانوادگی خود را وارد کنید"
             />
           </div>
-          <div class="form-group EditProfileModal-form-group">
+          <div class="form-group EditProfileModal-form-group" style="position: relative;">
             <label for="editBio">توضیحات</label>
             <textarea
               id="editBio"
               placeholder="یه چیزی درباره‌ی خودت بنویس..."
               rows="3"
-            ></textarea>
+            >
+            </textarea>
+            <span
+              id="bioCounter"
+            >
+              0/100
+            </span>
           </div>
           <!-- <div class="form-group">
                     <label for="editWebsite">لینک ها</label>
@@ -503,7 +512,9 @@
           <div class="gallery-modal-header">
             <div class="gallery-user-info">
               <div class="gallery-user-avatar"></div>
-              <div class="gallery-username" id="galleryUsername">کاربر نمونه</div>
+              <div class="gallery-username" id="galleryUsername">
+                کاربر نمونه
+              </div>
             </div>
             <button class="gallery-follow-btn">دنبال کردن</button>
           </div>
@@ -533,7 +544,10 @@
                   ></path>
                 </svg>
               </button>
-              <button class="gallery-action-btn gallery-action-off" onclick="showedit()">
+              <button
+                class="gallery-action-btn gallery-action-off"
+                onclick="showedit()"
+              >
                 <svg viewBox="0 0 24 24">
                   <path d="M12 20h9"></path>
                   <path
